@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Canvas Barrage </title>
+    <style>
+        .container{width:90%;min-width:360px;max-width:800px;margin:1em auto;}
+
+        .video-wrap{position:relative;}
+        .video-wrap>video{width:100%;}
+        .canvas-barrage{position:absolute;z-index:5;left:0;top:0;width:100%;pointer-events: none;}
+
+        input{padding:.3em;box-sizing: border-box;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-wrap">
+            <video controls src="https://easyhtml5video.com/assets/video/new/Penguins_of_Madagascar.mp4" />
+        </div>
+        <form>
+            <p style="display:flex;">
+               文字： <input name="text" placeholder="弹幕文字信息" maxlength="200" style="flex:1;" required />
+               <input type="submit" value="send" style="width:5em;margin-left:10px;" />
+            </p>
+            <p>
+               颜色： <input name="color" type="color" value="#FFFFFF" style="height:3em" />
+            </p>
+            <p>
+               透明度： <input name="opacity" type="range" min="0" max="1" step="0.1" value="1" />
+             </p>
+             <p>
+                速度： <input name="speed" type="range" min="100" max="500"  value="200" />
+             </p>
+             <p>
+                 <label>
+                    <input type="checkbox" checked="checked" />
+                    开启/隐藏
+                 </label>
+             </p>
+        </form>
+    </div>
+    <script src="./CanvasBarrage.js"></script>
+    <script>
+        "use strict";
+        (function(){
+            var video=document.querySelector("video");            
+            var barrage=new CanvasBarrage(video, 800);
+
+            barrage.push([
+                {
+                    time:0,
+                    text:"hello world!"
+                },
+                {
+                    time:1.5,
+                    text:"After 1.5 seconds...",
+                    color:"#0F0"
+                }
+            ]);
+
+
+            // 表单提交
+            document.forms[0].addEventListener("submit",function(e){
+                var els=this.elements,
+                    i=els.length,
+                    item=Object.create(null);
+
+                e.preventDefault();
+
+                while(i--){
+                    if(els[i].name){
+                        item[els[i].name]=els[i].value;
+                    }
+                }
+
+                item.time=video.currentTime;
+
+                barrage.push(item);
+            },false);
+
+
+            document.forms[0].querySelector("input[type='checkbox']").addEventListener("change",function(){
+                 this.checked?
+                    barrage.show():
+                    barrage.hide();
+            },false);
+        })();
+    </script>
+</body>
+</html>

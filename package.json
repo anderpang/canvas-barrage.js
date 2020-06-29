@@ -1,0 +1,24 @@
+{
+  "name": "canvas-barrage.js",
+  "version": "1.0.0",
+  "description": "canvas barrage video",
+  "main": "CanvasBarrage.js",
+  "types": "CanvasBarrage.d.ts",
+  "files": [
+    "CanvasBarrage.js",
+    "CanvasBarrage.d.ts",
+    "README.MD"
+  ],
+  "scripts": {
+    "build":"tsc -m umd ./CanvasBarrage.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "canvas",
+    "barrage",
+    "html5",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC"
+}
