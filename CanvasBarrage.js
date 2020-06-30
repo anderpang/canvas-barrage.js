@@ -1,15 +1,17 @@
 (function (context,factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
         exports.__esModule = true;
-        exports["default"] = factory();
+        exports["default"] = CanvasBarrage;
     }
-    else {
-        context.CanvasBarrage=factory();
+    else if (typeof define === "function" && define.amd) {
+        define(factory);
+    }
+    else{
+       context.CanvasBarrage=factory();
     }
 })(this,function () {
     "use strict";
-    
-    ;
+
     var CanvasBarrage = /** @class */ (function () {
         function CanvasBarrage(video, width) {
             if (width === void 0) { width = 1040; }
@@ -23,7 +25,7 @@
             this._rows = [];
             this.color = "#FFF";
             this.fontSize = 20; // 字号
-            this.lineHeight = this.fontSize * 1.5; // 行高像素
+            this.lineHeight = this.fontSize * 1.5; // 行高(像素)
             this.opacity = 1;
             this.speed = 200; // 秒速度
             this._timer = 0;
@@ -34,7 +36,7 @@
             video.addEventListener('ended', this, false);
             // video.addEventListener('timeupdate',this,false);
             // 进度条已经移动到了新的位置
-            // video.addEventListener('seeked',this,false);       
+            video.addEventListener('seeked', this, false);
             this._loop = this._loop.bind(this);
         }
         CanvasBarrage.prototype._ready = function () {
@@ -51,6 +53,8 @@
             canvas.height = this.height;
             this.ctx = canvas.getContext("2d");
             this.ctx.font = this.fontSize + "px null";
+            // this.ctx.shadowBlur    = 4;
+            // this.ctx.shadowColor   = "#000";
             (_a = video.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(canvas);
             video.addEventListener('canplaythrough', this, false);
             this.canvas = canvas;
@@ -67,12 +71,15 @@
                 case "ended":
                     this.stop();
                     break;
+                case "seeked":
+                    this._showList.length = this._index = 0;
+                    break;
             }
         };
         // 进行时间排序，就不用每次都循环整个数组
         CanvasBarrage.prototype._sort = function () {
             this._data.sort(function (a, b) {
-                return a.time - b.time;
+                return a.during - b.during;
             });
         };
         // 计算宽
@@ -111,7 +118,7 @@
             ctx.clearRect(0, 0, width, height);
             for (; index < len; index++) {
                 item = data[index];
-                if (item.time < currentTime) {
+                if (item.during < currentTime) {
                     if (showList.indexOf(item) === -1) {
                         this._setRowIndex(item, lineHeight);
                         showList.push(item);
@@ -129,7 +136,7 @@
             //console.log(showList)
             while (i--) {
                 item = showList[i];
-                duration = currentTime - item.time;
+                duration = currentTime - item.during;
                 speed = item.speed;
                 distance = speed * duration;
                 // console.log(distance,width + item._width!,distance > width + item._width!)
@@ -158,11 +165,11 @@
                 this._sort();
             }
             else {
-                var i = data.length, isInserted = false;
+                var i = 0, ii = data.length, isInserted = false;
                 this._calc.call(this, records);
-                while (i--) {
-                    if (data[i].time < records.time) {
-                        data.splice(i + 1, 0, records);
+                for (; i < ii; i++) {
+                    if (records.during < data[i].during) {
+                        data.splice(i, 0, records);
                         isInserted = true;
                         break;
                     }
@@ -177,15 +184,14 @@
         CanvasBarrage.prototype.show = function () {
             this.canvas.style.visibility = "";
             this._visible = true;
-            this._isStart = false;
-            this.start();
+            this._loop();
             return this;
         };
         // 隐藏
         CanvasBarrage.prototype.hide = function () {
             this.canvas.style.visibility = "hidden";
             this._visible = false;
-            cancelAnimationFrame(this._timer);
+            this.stop(true);
             return this;
         };
         CanvasBarrage.prototype.start = function () {
@@ -201,9 +207,12 @@
             this._loop();
             return this;
         };
-        CanvasBarrage.prototype.stop = function () {
+        CanvasBarrage.prototype.stop = function (isHide) {
+            if (isHide === void 0) { isHide = false; }
             this._isStart = false;
-            this._showList.length = 0; // 可能有些超出时间长度的
+            if (!isHide) {
+                this._showList.length = 0; // 可能有些超出时间长度的
+            }
             cancelAnimationFrame(this._timer);
         };
         return CanvasBarrage;

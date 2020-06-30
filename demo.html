@@ -50,11 +50,11 @@
 
             barrage.push([
                 {
-                    time:0,
+                    during:0,
                     text:"hello world!"
                 },
                 {
-                    time:1.5,
+                    during:1.5,
                     text:"After 1.5 seconds...",
                     color:"#0F0"
                 }
@@ -75,7 +75,7 @@
                     }
                 }
 
-                item.time=video.currentTime;
+                item.during=video.currentTime;
 
                 barrage.push(item);
             },false);

@@ -46,11 +46,11 @@ var barrage=new CanvasBarrage(video, 800);    // (dom, maxWidth)
 
 barrage.push([
     {
-        time:0,
+        during:0,
         text:"hello world!"
     },
     {
-        time:1.5,
+        during:1.5,
         text:"After 1.5 seconds...",
         color:"#0F0"
     }
@@ -61,7 +61,7 @@ barrage.push([
 ## METHODS
 ```ts
 interface IBarrageItem {
-    time: number,
+    during: number,
     text: string,
 
     color?: string,

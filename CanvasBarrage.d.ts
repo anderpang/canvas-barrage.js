@@ -1,9 +1,5 @@
-/**
- *  弹幕组件
- *  @example
- */
 interface IBarrageItem {
-    time: number;
+    during: number;
     text: string;
     color?: string;
     speed?: number;
